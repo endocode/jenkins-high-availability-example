@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.model.JenkinsLocationConfiguration>
+  <jenkinsUrl>JENKINS_URL</jenkinsUrl>
+</jenkins.model.JenkinsLocationConfiguration>

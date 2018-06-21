@@ -1,0 +1,8 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson>
+  <installStateName>RESTART</installStateName>
+  <useSecurity>false</useSecurity>
+  <numExecutors>1</numExecutors>
+  <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULLNAME}</workspaceDir>
+  <slaveAgentPort>JENKINS_JNLP_PORT</slaveAgentPort>
+</hudson>

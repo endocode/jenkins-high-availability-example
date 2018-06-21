@@ -1,0 +1,40 @@
+
+[Unit]
+Description=discovery service to itself as jenkins slaves
+
+After=network.target
+
+# NOTE: attempting to restart infinitely
+StartLimitIntervalSec=0
+
+
+
+[Service]
+Type=simple
+
+User=root
+Group=root
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=jenkins-swarm
+
+Environment=AGENT_PREFIX=linux
+Environment=NETWORK_INTERFACE=eth1
+
+ExecStart=/bin/sh -c 'BROADCAST_IP=$(ip address show dev ${NETWORK_INTERFACE} | grep -oP "(?<=brd\s)[\S]+(?:\s)"); \
+                     exec /bin/java -jar /etc/jenkins-swarm/swarm-client.jar \
+                     -autoDiscoveryAddress $${BROADCAST_IP} \
+                     -executors 2 \
+                     -name ${AGENT_PREFIX} \
+                     -labels ${AGENT_PREFIX} \
+                     -fsroot /jagent'
+
+
+Restart=always
+RestartSec=8s
+
+
+
+[Install]
+WantedBy=multi-user.target

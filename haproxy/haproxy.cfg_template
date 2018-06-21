@@ -1,0 +1,49 @@
+global
+        log /var/log   local0
+        log /dev/log   local1 notice
+        chroot /var/lib/haproxy
+        user haproxy
+        group haproxy
+        daemon
+
+defaults
+        mode http
+        log global
+        option dontlognull
+        option forwardfor
+        option http-server-close
+        retries 3
+        maxconn 2000
+        timeout http-request 60s
+        timeout queue 60s
+        timeout client 60s
+        timeout server 120s
+        timeout connect 20s
+        timeout check 60s
+
+frontend WEB
+        bind *:EXTERNAL_LOAD_BALANCER_IP_PORT name http-web
+        default_backend Jenkins_WEB
+
+backend Jenkins_WEB
+        stick-table type ip size 1 nopurge
+        stick on dst
+        server jenkins-master-1 PRIVATE_NETWORK_SLASH24_PREFIX.31:JENKINS_WEB_PORT check
+        server jenkins-master-2 PRIVATE_NETWORK_SLASH24_PREFIX.32:JENKINS_WEB_PORT check backup
+
+frontend JNLP
+        bind *:JENKINS_JNLP_PORT name jenkins-jnlp
+        option tcplog
+        mode tcp
+        timeout client 15m
+        use_backend Jenkins_JNLP
+
+backend Jenkins_JNLP
+        mode tcp
+        option              tcplog
+        timeout             server 15m
+        stick-table type ip size 1 nopurge
+        stick on dst
+        default-server inter 1s
+        server jenkins-master-1 PRIVATE_NETWORK_SLASH24_PREFIX.31:JENKINS_JNLP_PORT check port JENKINS_WEB_PORT
+        server jenkins-master-2 PRIVATE_NETWORK_SLASH24_PREFIX.32:JENKINS_JNLP_PORT check port JENKINS_WEB_PORT backup
