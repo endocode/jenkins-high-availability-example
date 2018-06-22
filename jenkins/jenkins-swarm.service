@@ -28,7 +28,7 @@ ExecStart=/bin/sh -c 'BROADCAST_IP=$(ip address show dev ${NETWORK_INTERFACE} | 
                      -executors 2 \
                      -name ${AGENT_PREFIX} \
                      -labels ${AGENT_PREFIX} \
-                     -fsroot /jagent'
+                     -fsroot /jenkins-agent'
 
 
 Restart=always

@@ -1,0 +1,21 @@
+@echo off
+
+call C:\ProgramData\chocolatey\bin\RefreshEnv.cmd
+SET DIR=%~dp0
+
+SET JAVA_EXE=java
+SET JENKINS_SWARM_EXEC=%DIR%\swarm-client.jar
+
+SET BROADCAST_IP=PRIVATE_NETWORK_SLASH24_PREFIX.255
+SET SLAVE_PREFIX=win-2012r2
+
+
+
+java -jar "%JENKINS_SWARM_EXEC%" ^
+     -autoDiscoveryAddress "%BROADCAST_IP%" ^
+     -executors 2 ^
+     -name "%SLAVE_PREFIX%" ^
+     -labels "%SLAVE_PREFIX%" ^
+     -fsroot C:\jenkins-agent
+
+

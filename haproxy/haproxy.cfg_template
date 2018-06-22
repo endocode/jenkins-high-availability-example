@@ -22,7 +22,7 @@ defaults
         timeout check 60s
 
 frontend WEB
-        bind *:EXTERNAL_LOAD_BALANCER_IP_PORT name http-web
+        bind *:EXTERNAL_LOAD_BALANCER_PORT name http-web
         default_backend Jenkins_WEB
 
 backend Jenkins_WEB

@@ -140,8 +140,7 @@ Vagrant.configure('2') do |config|
                 './../jenkins/jenkins.model.JenkinsLocationConfiguration.xml_template',
                 './../jenkins/example-job.xml',
                 './../jenkins/plugin-list.txt',
-                './../jenkins/var-lib-jenkins.mount',
-                './assets/linux/pacemaker.repo'
+                './../jenkins/var-lib-jenkins.mount'
             ]
 
             # node.vm.box = 'centos/7'
@@ -194,8 +193,9 @@ Vagrant.configure('2') do |config|
             hostname = "load-balancer"
 
             provision_scripts = Array.new(COMMON_PROVISION_SCRIPTS_LINUX).push(
+                'resolve.sh',
                 'haproxy.sh',
-                'resolve.sh'
+                'haproxy_configuration.sh'
             )
             asset_files = [
                 './../conf.env',
@@ -222,8 +222,8 @@ Vagrant.configure('2') do |config|
                                 ip: "#{EXTERNAL_LOAD_BALANCER_IP}",
                                 :adapter => 3
                 node.vm.network "forwarded_port",
-                                guest: "#{EXTERNAL_LOAD_BALANCER_IP_PORT}",
-                                host: "#{EXTERNAL_LOAD_BALANCER_IP_PORT}",
+                                guest: "#{EXTERNAL_LOAD_BALANCER_PORT}",
+                                host: "#{EXTERNAL_LOAD_BALANCER_PORT}",
                                 :adapter => 3
             end
 
@@ -259,7 +259,6 @@ Vagrant.configure('2') do |config|
             hostname = "jenkins-agent-linux-#{i}"
 
             provision_scripts = Array.new(COMMON_PROVISION_SCRIPTS_LINUX).push(
-                'resolve.sh',
                 'jenkins-agent_linux.sh'
             )
             asset_files = [
@@ -313,13 +312,21 @@ Vagrant.configure('2') do |config|
             hostname = "jenkins-agent-win-#{i}"
 
             provision_scripts = Array.new(COMMON_PROVISION_SCRIPTS_WIN).push(
-                'resolve.sh' # TODO
+                {
+                    :filename => 'jenkins-agent_win.bat',
+                    :args => [ PRIVATE_NETWORK_SLASH24_PREFIX ]
+                }
             )
             asset_files = [
-                # 'assets/win/secconfig.cfg'
+                './../conf.env',
+                './assets/win/secconfig.cfg',
+                './../jenkins/jenkins-swarm-service.bat_template'
             ]
 
             node.vm.box = 'opentable/win-2012r2-standard-amd64-nocm'
+            config.vm.box_version = nil
+
+            node.vm.communicator = 'winrm'
 
             node.vm.provider 'virtualbox' do |vb|
                 vb.name = "#{PREFIX}_jenkins-agent-win-#{i}"
@@ -351,13 +358,14 @@ Vagrant.configure('2') do |config|
 
             asset_files.each do |relFilePath|
                 filename = File.basename(relFilePath)
-                node.vm.provision 'file', source: "#{PROVISION_ROOT_PATH}/#{relFilePath}", destination: "#{REMOTE_SOURCE_PATH_WIN}/#{filename}"
+                node.vm.provision 'file',
+                                  source: "#{PROVISION_ROOT_PATH}/#{relFilePath}",
+                                  destination: "#{REMOTE_SOURCE_PATH_WIN}/#{filename}"
             end
-            node.vm.provision 'file', source: "#{PROVISION_ROOT_PATH}/../conf.env", destination: "#{REMOTE_SOURCE_PATH_WIN}/conf.env"
 
             # convert conf.env and make it work with windows
             node.vm.provision 'shell',
-                              path: "#{PROVISION_ROOT_PATH}/convert-configuration-file_win.ps1",
+                              path: "#{PROVISION_ROOT_PATH}/assets/win/convert-configuration-file_win.ps1",
                               privileged: true,
                               args: [
                                   "#{REMOTE_SOURCE_PATH_WIN}\\conf.env"
@@ -369,13 +377,18 @@ Vagrant.configure('2') do |config|
                               inline: "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
 
             provision_scripts.each do |script|
-                node.vm.provision 'shell',
-                                  path: "#{PROVISION_ROOT_PATH}/shell/#{script}",
+                if script.is_a? String
+                    filename = script
+                    arguments = []
+                elsif script.is_a? Object
+                    filename = script[:filename]
+                    arguments = script[:arguments] || []
+                end
+                node.vm.provision PROVISIONER,
+                                  path: "#{PROVISION_ROOT_PATH}/#{PROVISIONER}/#{filename}",
+                                  upload_path: "#{REMOTE_SOURCE_PATH_WIN}\\#{filename}",
                                   privileged: true,
-                                  args: [
-                                      REMOTE_SOURCE_PATH_WIN,
-                                      MOUNT_PATH_WIN
-                                  ]
+                                  args: arguments
             end
 
         end

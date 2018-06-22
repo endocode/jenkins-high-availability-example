@@ -30,7 +30,7 @@ __Prerequisites:__
 
 1.  adjust `/conf.env` according to your needs (and probably host resources)
 2.  `vagrant up`
-3.  go to `http[s]:${EXTERNAL_LOAD_BALANCER_IP}:${EXTERNAL_LOAD_BALANCER_IP_PORT}` to visit 
+3.  go to `http[s]:${EXTERNAL_LOAD_BALANCER_IP}:${EXTERNAL_LOAD_BALANCER_PORT}` to visit 
     Jenkins UI
 
 
