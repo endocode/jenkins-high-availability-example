@@ -2,8 +2,9 @@ Jenkins High Availability Example Implementation
 ================================================
 
 
-This repository holds an example implementation whose context and development process is described 
-[here](TODO) in a blog post.
+This repository holds an example implementation of an Jenkins HA infrastructure setup solely based 
+on Open Source components, whose reason of existence and development process is described 
+[in a blog post](TODO).
 
 
 
@@ -16,19 +17,21 @@ __Prerequisites:__
 
 ### Worth noticing
 
-1.  This setup could also serve as a simple Jenkins playground on your local machine!
-2.  It neither implements nor configurates any security mechanisms other then
-    +   private network for every component located behind the load balancer
-    +   simple firewall rules
+1.  This setup may also serve as a simple Jenkins playground on your local machine (provides Linux 
+    and Windows agents)!
+2.  It neither implements nor configurates any security measures other then
+    +   private network for all component located behind the load balancer
+    +   enabled firewall and some simple rules
 3.  STONITH is not (yet) implemented
-4.  Cluster only implements [https://www.ibm.com/developerworks/community/blogs/RohitShetty/entry/high_availability_cold_warm_hot](cold-standby) mode
+4.  cluster only implements [cold-standby](https://www.ibm.com/developerworks/community/blogs/RohitShetty/entry/high_availability_cold_warm_hot) mode
+5.  components: HAProxy, GlusterFS, Jenkins, Jenkins Swarm Plugin, Pacemaker, Corosync
 
 
 ### Usage
 
 #### Installation
 
-1.  adjust `/conf.env` according to your needs (and probably host resources)
+1.  adjust `/conf.env` according to your needs (and available host resources)
 2.  `vagrant up`
 3.  go to `http[s]:${EXTERNAL_LOAD_BALANCER_IP}:${EXTERNAL_LOAD_BALANCER_PORT}` to visit 
     Jenkins UI
@@ -44,10 +47,10 @@ pcs status corosync
 
 #### Playing with the cluster
 
-To move resources form one node to another, you could just stop one node by going into the node and 
-do `pcs cluster stop` (node name defaults to `local`). Alternatively change the preferred resource 
-location (e.g. `pcs constraint location jenkins-master--rsc prefers jenkins-master-2=INFINITY`) or
-make a node node going into standby (`pcs cluster standby jenkins-master-1`)
+To move resources form one node to another (simulate failure), you could stop one node by going into 
+the node and do `pcs cluster stop $NODE_NAME` (node name defaults to `local`), or maybe change the 
+configuration for the preferred resource location (e.g. `pcs constraint location jenkins-master--rsc prefers jenkins-master-2=INFINITY`).
+Another way would be to just send the active node into standby (`pcs cluster standby jenkins-master-1`)
 
 
 ### Future Work
