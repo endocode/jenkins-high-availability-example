@@ -2,7 +2,7 @@
 Description=Mounting Jenkins Home directory manually
 
 [Mount]
-What=gluster-node-1:/jenkins_home
+What=gluster-node-0:/jenkins_home
 Where=/var/lib/jenkins
 Type=glusterfs
 Options=direct-io-mode=disable,negative-timeout=2

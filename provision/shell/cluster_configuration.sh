@@ -35,7 +35,7 @@ pcs property set no-quorum-policy=ignore
 # for GlusterFS when writing files (meaning, create+delete is faster then GlusterFS can process them)
 JENKINS_DIR_RESOURCE_NAME="jenkins-master-home-dir--rsc"
 pcs resource create "${JENKINS_DIR_RESOURCE_NAME}" ocf:heartbeat:Filesystem \
-    device="gluster-node-1:/${GLUSTER_BRICK_ID}" \
+    device="gluster-node-0:/${GLUSTER_BRICK_ID}" \
     directory="${JENKINS_HOME_PATH}" \
     fstype="glusterfs" \
     options=direct-io-mode=disable,negative-timeout=2 \
