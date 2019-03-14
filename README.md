@@ -39,10 +39,12 @@ __Prerequisites:__
 
 #### Verify cluster state
 
+*NOTE: must be executed as privileged user*
+
 ```bash
-pcs status
-pcs cluster status
-pcs status corosync
+$  pcs status
+$  pcs cluster status
+$  pcs status corosync
 ```
 
 #### Playing with the cluster
@@ -71,8 +73,16 @@ Both approaches require to write a fence agent from scratch, see
 +   `/usr/share/fence/`
 
 
+#### Configuration Management
+
+The entire provisioning and system setup is implemented with scripts (bash, batch). Today of course,
+this is done in a more declarative way, that would also ensure idempotency. Since this examples is 
+based on centos7 it would only make sense to use *Ansible* here. But, any technology
+[supported by vagrant](https://www.vagrantup.com/docs/provisioning/) would suffice.
+
+
 ### Resources
 
-+   TODO: blog post link
-+   http://clusterlabs.org/pacemaker/doc/en-US/Pacemaker/1.1/html/Clusters_from_Scratch/index.html
-+   https://clusterlabs.org/pacemaker/doc/crm_fencing.html
++   [Blog post on this topic including a more detailed explanation](https://endocode.com/blog/2018/08/17/jenkins-high-availability-setup/)
++   [A cluster from scratch powered by pacemaker](http://clusterlabs.org/pacemaker/doc/en-US/Pacemaker/1.1/html/Clusters_from_Scratch/index.html)
++   [CRM Fencing](https://clusterlabs.org/pacemaker/doc/crm_fencing.html)

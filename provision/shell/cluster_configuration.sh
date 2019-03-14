@@ -38,7 +38,7 @@ pcs resource create "${JENKINS_DIR_RESOURCE_NAME}" ocf:heartbeat:Filesystem \
     device="gluster-node-0:/${GLUSTER_BRICK_ID}" \
     directory="${JENKINS_HOME_PATH}" \
     fstype="glusterfs" \
-    options=direct-io-mode=disable,negative-timeout=2 \
+    options=direct-io-mode=disable,negative-timeout=0.1 \
     fast_stop="no" force_unmount="safe" \
     op stop on-fail=stop timeout=200 \
     op monitor on-fail=stop timeout=200 \

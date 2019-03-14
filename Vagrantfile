@@ -28,7 +28,7 @@ Vagrant.configure('2') do |config|
 
 
     config.vm.box = 'centos/7'
-    config.vm.box_version = '1804.02'
+    config.vm.box_version = '1902.01'
 
 
     dhcpServerIP = "#{PRIVATE_NETWORK_SLASH24_PREFIX}.1"
