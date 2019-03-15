@@ -4,7 +4,7 @@ Jenkins High Availability Example Implementation
 
 This repository holds an example implementation of an Jenkins HA infrastructure setup solely based 
 on Open Source components, whose reason of existence and development process is described 
-[in a blog post](TODO).
+[in a blog post](https://endocode.com/blog/2018/08/17/jenkins-high-availability-setup/).
 
 
 
