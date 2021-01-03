@@ -16,7 +16,7 @@ pcs cluster auth jenkins-master-1 jenkins-master-2 \
 
 # create initial cluster
 pcs cluster setup \
-    --name "jenkins-cluster" \
+    "jenkins-cluster" \
     jenkins-master-1 jenkins-master-2
 
 pcs cluster start --all
