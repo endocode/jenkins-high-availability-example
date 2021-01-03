@@ -10,7 +10,7 @@ source ./conf.env
 
 
 # configure corosync
-pcs cluster auth jenkins-master-1 jenkins-master-2 \
+pcs host auth jenkins-master-1 jenkins-master-2 \
     -u "${COROSYNC_USER_NAME}" \
     -p "${COROSYNC_USER_PASSWORD}"
 
